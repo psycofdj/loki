@@ -2,8 +2,8 @@
     <string name="app_name">Loki</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="speech_prompt">Say something&#8230;</string>
-    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="speech_prompt">Donner votre commande&#8230;</string>
+    <string name="speech_not_supported">La reconnaissance vocale est actuellement indisponible</string>
     <string name="tap_on_mic">Tap on mic to speak</string>
     <string name="host">Adresse</string>
     <string name="port">Port</string>

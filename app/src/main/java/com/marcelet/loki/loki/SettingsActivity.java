@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -46,25 +48,24 @@ public class SettingsActivity extends AppCompatActivity
         mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
 
 
-        /*
-        View.OnFocusChangeListener lHandler = new View.OnFocusChangeListener() {
+
+
+        TextWatcher lHandler = new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
                 validateUi();
             }
         };
-        */
 
-        View.OnKeyListener lHandler =new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                validateUi();
-            }
-        };
-
-        mInputHost.setOnKeyListener(lHandler);
-        mInputPort.setOnKeyListener(lHandler);
-        mInputKey.setOnKeyListener(lHandler);
+        mInputKey.addTextChangedListener(lHandler);
+        mInputPort.addTextChangedListener(lHandler);
+        mInputHost.addTextChangedListener(lHandler);
 
         loadSettings();
         validateUi();
@@ -151,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity
 
     protected void checkConfig()
     {
-        mApp.testConfiguration(new LokiApp.TestResult() {
+        mApp.sendCommand("null", new LokiApp.TestResult() {
             @Override
             public void onSuccess() {
                 onSettingsSuccess();

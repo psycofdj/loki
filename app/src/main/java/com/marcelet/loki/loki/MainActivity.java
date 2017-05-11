@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
     private ImageButton btnSettings;
+    private LokiApp mApp;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
 
@@ -29,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        mApp           = (LokiApp) getApplication();
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
-        btnSettings = (ImageButton) findViewById(R.id.btnSettings);
-        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        btnSettings    = (ImageButton) findViewById(R.id.btnSettings);
+        btnSpeak       = (ImageButton) findViewById(R.id.btnSpeak);
 
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -49,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(lIntent);
             }
         });
-
-
     }
 
     private void promptSpeechInput() {
@@ -80,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     txtSpeechInput.setText(result.get(0));
+                    mApp.sendCommand(result.get(0), new LokiApp.TestResult() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+                        @Override
+                        public void onKeyError() {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.error_key),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        @Override
+                        public void onCnxError() {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.error_cnx),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 break;
             }

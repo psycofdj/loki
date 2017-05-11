@@ -7,9 +7,6 @@ import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import java.util.concurrent.Callable;
-
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -29,7 +26,7 @@ public class LokiApp extends Application
     private String            mHost;
     private String            mPort;
     private String            mKey;
-    static private int        msTimeoutMs = 30000;
+    static private int        msTimeoutMs = 15000;
     static private int        msRetry = 0;
 
 
@@ -88,27 +85,31 @@ public class LokiApp extends Application
         return lUri.toString();
     }
 
-    public void testConfiguration(final TestResult pRessult)
-    {
-        String lQuery = getUrl("null");
+
+    public void sendCommand(String pCommand, final TestResult pResult) {
+        String lQuery = getUrl(pCommand);
         AsyncHttpClient lClient = new AsyncHttpClient();
-        lClient.setMaxRetriesAndTimeout(msRetry, msTimeoutMs);
+        lClient.setConnectTimeout(msTimeoutMs);
+        lClient.setResponseTimeout(msTimeoutMs);
+        lClient.setMaxRetriesAndTimeout(msRetry, 100);
         lClient.get(lQuery, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String lString = new String(responseBody);
+                Log.v("loki", "got result : " + lString);
                 if (lString.contains("Clé API non valide")) {
                     mValid = false;
-                    pRessult.onKeyError();
+                    pResult.onKeyError();
                 } else {
                     mValid = true;
-                    pRessult.onSuccess();
+                    pResult.onSuccess();
                 }
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 mValid = false;
-                pRessult.onCnxError();
+                //Log.v("loki", "got result : " + new String(errorResponse));
+                pResult.onCnxError();
             }
         });
     }
